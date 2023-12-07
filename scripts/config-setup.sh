@@ -2,16 +2,18 @@
 
 # Read database credentials from configuration.php
 # CONFIG_FILE="..\configuration.php"
-CONFIG_FILE="/joomla-data/configuration.php"
+CONFIG_FILE="/dev_joomla/joomla-backup/configuration.php"
 
-while  ! [ -f /joomla-data/configuration.php ]; do
+while  ! [ -f "$CONFIG_FILE" ]; do
 	echo "$(date) - Waiting for Joomla configuration file - ${CONFIG_FILE}"
 	sleep 10
 done
 
+ls -l "$CONFIG_FILE"
+
 # if ![ -f CONFIG_FILE ]; then
-	# echo "No configuration file for Joomla found"
-	# exit 1
+# 	echo "No configuration file for Joomla found"
+# 	exit 1
 # fi
 
 DB_SITENAME_LINE=$(grep -oPi 'public \$sitename = ([^;]+);' $CONFIG_FILE | cut --complement -c 1-20)
