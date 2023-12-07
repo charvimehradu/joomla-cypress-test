@@ -8,6 +8,8 @@ services:
     command: --default-authentication-plugin=mysql_native_password --sql_mode=""
     environment:
       MYSQL_ROOT_PASSWORD: example12345678
+    volumes:
+      - ./joomla-backup:/docker-entrypoint-initdb.d
     networks:
       - joomla-network
 
@@ -39,13 +41,15 @@ services:
       JOOMLA_DB_HOST: mysql
       JOOMLA_DB_USER: root
       JOOMLA_DB_PASSWORD: example12345678
-      JOOMLA_DB_NAME: joomla
+      # JOOMLA_DB_NAME: joomla
       JOOMLA_INSTALLATION_DISABLE_LOCALHOST_CHECK: 1
     volumes:
       - .:/dev_joomla
       - joomla-data:/var/www/html
+      - joomla-backup:/var/www/html/backups
     depends_on:
       - mysql
+      - ftpserver
     networks:
       - joomla-network
 
@@ -59,11 +63,12 @@ services:
     depends_on:
       - joomla-test
     environment:
-      CYPRESS_BASE_URL: 'http://joomla-test'
+      CYPRESS_BASE_URL: 'https://charvi.joom.ws'
       DISPLAY:
     volumes:
       - .:/dev_joomla
       - joomla-data:/joomla-data
+      - joomla-backup:/var/www/html/backups
       - ~/.Xauthority:/root/.Xauthority:rw
       - /tmp/.X11-unix:/tmp/.X11-unix
     working_dir: /cypress-test/tests
@@ -82,6 +87,7 @@ services:
       - 30000-30009:30000-30009
     volumes:
       - joomla-data:/home/ftp
+      - joomla-backup:/home/ftp/backups
     networks:
       - joomla-network
 
@@ -89,3 +95,4 @@ networks:
   joomla-network:
 volumes:
   joomla-data:
+  joomla-backup:

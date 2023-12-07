@@ -1,6 +1,15 @@
 describe('Test in backend that the article form', () => {
-  beforeEach(() => { cy.doAdministratorLogin() });
+  beforeEach(() => { cy.db_createUser({
+    name: 'admin012',
+    username: 'admin',
+    email: 'test@example.com',
+    password: 'admin12345678',
+    }).then(() => {
+      cy.doAdministratorLogin();
+    });
+  });
   afterEach(() => cy.task('queryDB', "DELETE FROM #__content WHERE title = 'Test article'"));
+  // afterEach(() => cy.task('queryDB', "DELETE FROM #__users WHERE username = 'admin'"));
 
   it('can create an article', () => {
     cy.visit('/administrator/index.php?option=com_content&task=article.add');
